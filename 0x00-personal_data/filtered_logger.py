@@ -107,3 +107,40 @@ def get_db() -> MySQLConnection:
     )
 
     return connection
+
+
+def main() -> None:
+    """
+    Obtains a database connection using get_db(), retrieves all rows
+    in the users table, and displays each row under a filtered format
+    """
+    # Setup logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format='[HOLBERTON] user_data INFO %(asctime)s: %(message)s'
+        )
+    logger = logging.getLogger('user_data')
+
+    # Get database connection
+    db_conn = get_db()
+    cursor = db_conn.cursor(dictionary=True)
+
+    # Execute query to fetch all rows from users table
+    cursor.execute("SELECT * FROM users;")
+    rows = cursor.fetchall()
+
+    # Log each row in the users table
+    for row in rows:
+        filtered_data = {field: "***" if field in PII_FIELDS else
+                         row[field] for field in row}
+        log_message = "; ".join([f"{key}={value}" for
+                                 key, value in filtered_data.items()])
+        logger.info(log_message)
+
+    # Clean up
+    cursor.close()
+    db_conn.close()
+
+
+if __name__ == '__main__':
+    main()

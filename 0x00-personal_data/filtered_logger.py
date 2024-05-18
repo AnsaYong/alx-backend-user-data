@@ -5,6 +5,9 @@ This module provides a function that returns the log message obfuscated
 import re
 import logging
 from typing import List, Tuple
+import mysql.connector
+from mysql.connector import connection
+import os
 
 # Define a list of fields considered PII (Personally Identifiable Information)
 PII_FIELDS: Tuple[str, ...] = ('name', 'email', 'phone', 'ssn', 'password')
@@ -77,3 +80,29 @@ def get_logger() -> logging.Logger:
     logger.addHandler(stream_handler)
 
     return logger
+
+
+def get_db() -> connection.MySQLConnection:
+    """
+    Get a connection object to the database
+
+    Returns:
+        mysql.connector.connection.MySQLConnection: A connection to the
+        MySQL database
+
+    """
+    # Retrieve environment variables for database connection
+    db_username = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
+    db_password = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
+    db_host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    db_name = os.getenv('PERSONAL_DATA_DB_NAME')
+
+    # Connect to the database using the retrieved credentials
+    connection = mysql.connector.connect(
+        user=db_username,
+        password=db_password,
+        host=db_host,
+        database=db_name
+    )
+
+    return connection

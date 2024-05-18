@@ -6,8 +6,9 @@ import re
 import logging
 from typing import List, Tuple
 import mysql.connector
-from mysql.connector import connection
+from mysql.connector.connection import MySQLConnection
 import os
+import logging
 
 # Define a list of fields considered PII (Personally Identifiable Information)
 PII_FIELDS: Tuple[str, ...] = ('name', 'email', 'phone', 'ssn', 'password')
@@ -82,7 +83,7 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db() -> connection.MySQLConnection:
+def get_db() -> MySQLConnection:
     """
     Get a connection object to the database
 

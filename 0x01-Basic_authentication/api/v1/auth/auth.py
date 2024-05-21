@@ -41,13 +41,17 @@ class Auth:
 
     def authorization_header(self, request=None) -> str:
         """
-        Handles the Authorization header
+        Handles the Authorization header.
+        Validates all requests to secure the API
 
         Returns:
             - The value of the Authorization header
             - None if the Authorization header is not present
         """
-        return None
+        if request is None or request.headers.get('Authorization') is None:
+            return None
+
+        return request.headers.get('Authorization')
 
     def current_user(self, request=None) -> TypeVar('User'):
         """

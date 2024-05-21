@@ -62,9 +62,3 @@ class Auth:
             - None if the request is not authorized
         """
         return None
-
-class BasicAuth(Auth):
-    """
-    Manages the API Basic authentication
-    """
-    pass

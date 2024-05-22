@@ -89,8 +89,15 @@ class BasicAuth(Auth):
             return None
         if user_pwd is None or not isinstance(user_pwd, str):
             return None
+
         from models.user import User
-        user = User.search({'email': user_email})
-        if user is None or not user.is_valid_password(user_pwd):
+        users = User.search({'email': user_email})
+        if not users:
             return None
+
+        # Assume that there should only be one user with the given email
+        user = users[0]
+        if not user.is_valid_password(user_pwd):
+            return None
+
         return user

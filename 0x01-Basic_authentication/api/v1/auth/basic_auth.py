@@ -71,3 +71,26 @@ class BasicAuth(Auth):
         if ':' not in decoded_base64_authorization_header:
             return (None, None)
         return tuple(decoded_base64_authorization_header.split(':', 1))
+
+    def user_object_from_credentials(
+            self, user_email: str, user_pwd: str) -> TypeVar('User'):
+        """
+        Retrieves the user object from the credentials
+
+        Args:
+            - user_email: The user email
+            - user_pwd: The user password
+
+        Returns:
+            - The user object if the credentials are valid
+            - None if the credentials are not valid
+        """
+        if user_email is None or not isinstance(user_email, str):
+            return None
+        if user_pwd is None or not isinstance(user_pwd, str):
+            return None
+        from models.user import User
+        user = User.search({'email': user_email})
+        if user is None or not user.is_valid_password(user_pwd):
+            return None
+        return user

@@ -8,7 +8,8 @@ from models.user import User
 import os
 
 
-@app_views.route('/auth_session/login/', methods=['POST'], strict_slashes=False)
+@app_views.route('/auth_session/login/',
+                 methods=['POST'], strict_slashes=False)
 def login():
     """
     POST /api/v1/auth_session/login/
@@ -25,7 +26,7 @@ def login():
     user = User.search({'email': email})
     if user is None or not user:
         return jsonify({"error": "no user found for this email"}), 404
-    user = user[0] # Assuming the search returns a list of users
+    user = user[0]  # Assuming the search returns a list of users
 
     if not user.is_valid_password(password):
         return jsonify({"error": "wrong password"}), 401

@@ -62,3 +62,21 @@ class Auth:
             - None if the request is not authorized
         """
         return None
+
+    def session_cookie(self, request=None):
+        """
+        Handles the cookie value of the request
+
+        Args:
+            - request: the request object
+        Returns:
+            - The value of the cookie
+        """
+        if request is None:
+            return None
+        
+        cookie_name = os.getenv('SESSION_NAME')
+        if cookie_name is None:
+            return None
+
+        return request.cookies.get(cookie_name)

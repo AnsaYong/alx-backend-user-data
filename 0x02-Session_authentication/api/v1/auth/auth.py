@@ -75,7 +75,7 @@ class Auth:
         """
         if request is None:
             return None
-        
+
         cookie_name = os.getenv('SESSION_NAME')
         if cookie_name is None:
             return None

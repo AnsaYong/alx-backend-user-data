@@ -6,6 +6,7 @@ from flask import request, jsonify
 from api.v1.auth.session_auth import SessionAuth
 from datetime import datetime
 import os
+from datetime import timedelta
 
 
 class SessionExpAuth(SessionAuth):
@@ -21,7 +22,7 @@ class SessionExpAuth(SessionAuth):
         session_duration = os.getenv('SESSION_DURATION')
         try:
             self.session_duration = int(session_duration)
-        except Exception:
+        except (TypeError, ValueError):
             self.session_duration = 0
 
 
@@ -39,8 +40,11 @@ class SessionExpAuth(SessionAuth):
         if session_id is None:
             return None
 
-        session_dict = self.user_id_by_session_id.get(session_id)
-        session_dict['created_at'] = datetime.now()
+        session_dict = {
+            'user_id': user_id,
+            'created_at': datetime.now()
+        }
+        self.user_id_by_session_id[session_id] = session_dict
         return session_id
 
     def user_id_for_session_id(self, session_id: str = None) -> str:
@@ -67,8 +71,7 @@ class SessionExpAuth(SessionAuth):
         if created_at is None:
             return None
 
-        expiration_time = created_at.timestamp() + self.session_duration
-        if expiration_time < datetime.now().timestamp():
+        if created_at + timedelta(seconds=self.session_duration) < datetime.now():
             return None
 
         return session_dict.get('user_id')

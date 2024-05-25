@@ -16,7 +16,7 @@ class UserSession(Base):
         Args:
             args (list): the list of arguments
             kwargs (dict): the dictionary of keyword arguments
-        
+
         Attributes:
             user_id (str): the user id
             session_id (str): the session id

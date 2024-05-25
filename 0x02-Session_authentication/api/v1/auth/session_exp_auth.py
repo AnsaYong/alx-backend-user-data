@@ -25,7 +25,6 @@ class SessionExpAuth(SessionAuth):
         except (TypeError, ValueError):
             self.session_duration = 0
 
-
     def create_session(self, user_id: str = None) -> str:
         """
         Create a session with a timestamp
@@ -71,7 +70,8 @@ class SessionExpAuth(SessionAuth):
         if created_at is None:
             return None
 
-        if created_at + timedelta(seconds=self.session_duration) < datetime.now():
+        if created_at + timedelta(
+                seconds=self.session_duration) < datetime.now():
             return None
 
         return session_dict.get('user_id')

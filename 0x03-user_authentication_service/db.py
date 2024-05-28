@@ -63,6 +63,10 @@ class DB:
 
         Returns:
             User: The first user object.
+
+        Raises:
+            NoResultFound: If no user is found with the given criteria.
+            InvalidRequestError: If the request is invalid.
         """
         try:
             user = self._session.query(User).filter_by(**kwargs).one()
@@ -82,13 +86,16 @@ class DB:
 
         Returns:
             None
+
+        Raises:
+            ValueError: If the attribute is invalid.
         """
         user = self.find_user_by(id=user_id)
 
-        try:
-            for key, value in kwargs.items():
+        for key, value in kwargs.items():
+            if hasattr(user, key):
                 setattr(user, key, value)
-        except AttributeError:
-            raise ValueError("Invalid attribute.")
+            else:
+                raise ValueError(f"Invalid attribute: {key}")
 
         self._session.commit()

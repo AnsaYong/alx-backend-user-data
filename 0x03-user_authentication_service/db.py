@@ -22,7 +22,7 @@ class DB:
 
     def __init__(self) -> None:
         """Initialize a new DB instance"""
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -50,5 +50,5 @@ class DB:
         session = self._session
         session.add(new_user)
         session.commit()
-        # session.refresh(new_user)  # Refresh the user object to get the ID
+        session.refresh(new_user)  # Refresh the user object to get the ID
         return new_user

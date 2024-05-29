@@ -4,6 +4,8 @@ A simple Flask application to demonstrate the use of SQLAlchemy.
 """
 from flask import Flask, jsonify, request, abort, make_response
 from flask import redirect, url_for
+import uuid
+from sqlalchemy.orm.exc import NoResultFound
 from auth import Auth
 
 

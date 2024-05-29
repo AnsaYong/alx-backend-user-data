@@ -3,6 +3,7 @@
 A simple Flask application to demonstrate the use of SQLAlchemy.
 """
 from flask import Flask, jsonify, request, abort, make_response
+from flask import redirect, url_for
 from auth import Auth
 
 
@@ -58,6 +59,27 @@ def login():
     response.set_cookie("session_id", session_id)
 
     return response
+
+
+@app.route("/sessions", methods=["DELETE"])
+def logout():
+    """
+    DELETE /sessions route for logging out a user.
+    """
+    session_id = request.cookies.get("session_id")
+
+    if not session_id:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if not user:
+        abort(403)
+
+    # Invalidate the session
+    AUTH._db.update_user(user.id, session_id=None)
+
+    return redirect(url_for("home"))
 
 
 if __name__ == "__main__":

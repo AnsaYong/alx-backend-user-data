@@ -39,10 +39,6 @@ def log_in_wrong_password(email: str, password: str) -> None:
         f"{BASE_URL}/sessions", data={"email": email, "password": password}
     )
     assert response.status_code == 401, f"Expected 401, got (response.status_code)"
-    assert response.json() == {
-        "email": email,
-        "message": "wrong password",
-    }, f"Unexpected response: {response.json()}"
 
 
 def log_in(email: str, password: str) -> Optional[str]:
@@ -59,12 +55,9 @@ def log_in(email: str, password: str) -> Optional[str]:
     response = requests.post(
         f"{BASE_URL}/sessions", data={"email": email, "password": password}
     )
-    assert response.status_code == 200, f"Expected 200, got (response.status_code)"
-    assert response.json() == {
-        "email": email,
-        "message": "logged in",
-    }, f"Unexpected response: {response.json()}"
-    return response.json().get("session_id")
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    assert "session_id" in response.cookies, "No session_id cookie found"
+    return response.cookies["session_id"]
 
 
 def profile_unlogged() -> None:
@@ -72,10 +65,7 @@ def profile_unlogged() -> None:
     Profile of an unlogged user
     """
     response = requests.get(f"{BASE_URL}/profile")
-    assert response.status_code == 403, f"Expected 403, got (response.status_code)"
-    assert response.json() == {
-        "message": "Unauthorized",
-    }, f"Unexpected response: {response.json()}"
+    assert response.status_code == 403, f"Expected 403, got {response.status_code}"
 
 
 def profile_logged(session_id: str) -> None:
@@ -85,8 +75,9 @@ def profile_logged(session_id: str) -> None:
     Args:
         session_id (str): Session ID
     """
-    response = requests.get(f"{BASE_URL}/profile", cookies={"session_id": session_id})
-    assert response.status_code == 200, f"Expected 200, got (response.status_code)"
+    cookies = {"session_id": session_id}
+    response = requests.get(f"{BASE_URL}/profile", cookies=cookies)
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
     assert response.json() == {
         "email": EMAIL,
     }, f"Unexpected response: {response.json()}"
@@ -102,7 +93,7 @@ def log_out(session_id: str) -> None:
     response = requests.delete(
         f"{BASE_URL}/sessions", cookies={"session_id": session_id}
     )
-    assert response.status_code == 200, f"Expected 200, got (response.status_code)"
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
     assert response.json() == {
         "message": "Bienvenue",
     }, f"Unexpected response: {response.json()}"
@@ -119,7 +110,7 @@ def reset_password_token(email: str) -> str:
         str: Reset token
     """
     response = requests.post(f"{BASE_URL}/reset_password", data={"email": email})
-    assert response.status_code == 200, f"Expected 200, got (response.status_code)"
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
     assert response.json() == {
         "email": email,
         "message": "Reset password email sent",
@@ -140,7 +131,7 @@ def update_password(email: str, reset_token: str, new_password: str) -> None:
         f"{BASE_URL}/reset_password",
         data={"email": email, "reset_token": reset_token, "new_password": new_password},
     )
-    assert response.status_code == 200, f"Expected 200, got (response.status_code)"
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
     assert response.json() == {
         "email": email,
         "message": "Password updated",

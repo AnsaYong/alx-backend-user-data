@@ -20,7 +20,7 @@ def register_user(email: str, password: str) -> None:
     response = requests.post(
         f"{BASE_URL}/users", data={"email": email, "password": password}
     )
-    assert response.status_code == 200, f"Expected 200, got (response.status_code)"
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
     assert response.json() == {
         "email": email,
         "message": "user created",
@@ -38,7 +38,7 @@ def log_in_wrong_password(email: str, password: str) -> None:
     response = requests.post(
         f"{BASE_URL}/sessions", data={"email": email, "password": password}
     )
-    assert response.status_code == 401, f"Expected 401, got (response.status_code)"
+    assert response.status_code == 401, f"Expected 401, got {response.status_code}"
 
 
 def log_in(email: str, password: str) -> Optional[str]:

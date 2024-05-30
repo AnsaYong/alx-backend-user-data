@@ -111,11 +111,7 @@ def reset_password_token(email: str) -> str:
     """
     response = requests.post(f"{BASE_URL}/reset_password", data={"email": email})
     assert response.status_code == 200, f"Expected 200, got {response.status_code}"
-    assert response.json() == {
-        "email": email,
-        "message": "Reset password email sent",
-    }, f"Unexpected response: {response.json()}"
-    return response.json().get("reset_token")
+    return response.json()["reset_token"]
 
 
 def update_password(email: str, reset_token: str, new_password: str) -> None:

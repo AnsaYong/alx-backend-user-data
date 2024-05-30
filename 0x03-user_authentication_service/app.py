@@ -137,14 +137,9 @@ def update_password():
         abort(400, "Email, reset_token, and new_password are required")
 
     try:
-        user = AUTH._db.find_user_by(email=email)
-    except NoResultFound:
-        abort(403)
-
-    if user.reset_token != reset_token:
-        abort(403)
-
-    AUTH._db.update_user(user.id, password=new_password, reset_token=None)
+        AUTH.update_password(password=new_password, reset_token=reset_token)
+    except ValueError:
+        abort(403, description="Invalid reset_token")
 
     return jsonify({"email": email, "message": "password updated"}), 200
 
